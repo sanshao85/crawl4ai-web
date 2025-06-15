@@ -89,12 +89,37 @@ Open your browser and visit: http://localhost:8080
 
 ### API Usage
 
-The application provides RESTful API endpoints:
+The application provides a comprehensive RESTful API for programmatic access:
 
-- `POST /api/v1/crawl` - Create crawling task
+#### Quick Start
+```bash
+# Simple synchronous crawl
+curl -X POST "http://localhost:8080/api/v1/crawl/quick" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com", "config": {"extraction_strategy": "default"}}'
+
+# Asynchronous crawl with task tracking
+curl -X POST "http://localhost:8080/api/v1/crawl/" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com", "config": {"extraction_strategy": "default"}}'
+```
+
+#### Key API Endpoints
+- `POST /api/v1/crawl/` - Create crawling task
+- `POST /api/v1/crawl/quick` - Synchronous crawl with timeout
+- `POST /api/v1/crawl/batch` - Batch crawl multiple URLs
 - `GET /api/v1/crawl/{task_id}` - Get task status and results
+- `GET /api/v1/crawl/{task_id}/download` - Download results as file
+- `GET /api/v1/crawl/stats` - Get crawling statistics
+- `POST /api/v1/auth/generate-key` - Generate API key
+- `GET /api/v1/health/` - Health check
 
-API Documentation: http://localhost:8080/docs
+#### Documentation
+- **Interactive API Docs**: http://localhost:8080/docs
+- **API Guide**: [docs/API.md](docs/API.md)
+- **Quick Start**: [docs/QUICK_START_API.md](docs/QUICK_START_API.md)
+- **Examples**: [docs/API_EXAMPLES.md](docs/API_EXAMPLES.md)
+- **Postman Collection**: [docs/Crawl4AI_API.postman_collection.json](docs/Crawl4AI_API.postman_collection.json)
 
 ## 📁 Project Structure
 

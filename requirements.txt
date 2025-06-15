@@ -36,6 +36,7 @@ slowapi>=0.1.9
 
 # Logging and monitoring
 structlog>=23.0.0
+psutil>=5.9.0
 
 # Development dependencies
 pytest>=7.0.0

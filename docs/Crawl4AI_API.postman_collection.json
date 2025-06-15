@@ -1,0 +1,374 @@
+{
+  "info": {
+    "name": "Crawl4AI Web API",
+    "description": "Complete API collection for Crawl4AI Web Application",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "taskId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Crawling",
+      "item": [
+        {
+          "name": "Create Crawl Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"config\": {\n    \"extraction_strategy\": \"default\",\n    \"word_count_threshold\": 200,\n    \"include_links\": true,\n    \"include_images\": true,\n    \"take_screenshot\": false\n  },\n  \"options\": {\n    \"priority\": \"normal\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/crawl/",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/crawl/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "{{taskId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Quick Crawl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"config\": {\n    \"extraction_strategy\": \"default\",\n    \"word_count_threshold\": 100\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/crawl/quick?timeout=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "quick"],
+              "query": [
+                {
+                  "key": "timeout",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Batch Crawl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"urls\": [\n    \"https://example.com\",\n    \"https://httpbin.org/html\"\n  ],\n  \"config\": {\n    \"extraction_strategy\": \"default\",\n    \"word_count_threshold\": 150\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/crawl/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "batch"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/crawl/?status=completed&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", ""],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "completed"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task Result",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/crawl/{{taskId}}/result?format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "{{taskId}}", "result"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Download Result",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/crawl/{{taskId}}/download?format=markdown",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "{{taskId}}", "download"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "markdown"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"config\": {\n    \"extraction_strategy\": \"default\",\n    \"word_count_threshold\": 200\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/crawl/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "validate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/crawl/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "{{taskId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/crawl/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["crawl", "stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Configuration",
+      "item": [
+        {
+          "name": "Get Default Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/config/defaults",
+              "host": ["{{baseUrl}}"],
+              "path": ["config", "defaults"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Strategies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/config/strategies",
+              "host": ["{{baseUrl}}"],
+              "path": ["config", "strategies"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Generate API Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"My API Key\",\n  \"description\": \"For testing purposes\",\n  \"expires_in_days\": 30\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/generate-key",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "generate-key"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List API Keys",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/keys",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "keys"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify API Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Basic Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detailed Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/detailed",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "detailed"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "System Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "metrics"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

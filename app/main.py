@@ -16,7 +16,7 @@ import uvicorn
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import settings, STATIC_DIR, TEMPLATES_DIR, API_V1_PREFIX
-from app.api import crawler, websocket, config as config_api
+from app.api import api_router
 from app.models.response import HealthCheckResponse
 from datetime import datetime
 
@@ -61,19 +61,10 @@ if os.path.exists(STATIC_DIR):
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Include API routers
-app.include_router(
-    crawler.router,
-    prefix=API_V1_PREFIX,
-    tags=["crawler"]
-)
+app.include_router(api_router)
 
-app.include_router(
-    config_api.router,
-    prefix=API_V1_PREFIX,
-    tags=["config"]
-)
-
-# Include WebSocket router
+# Include WebSocket router (separate from API versioning)
+from app.api import websocket
 app.include_router(
     websocket.router,
     tags=["websocket"]
