@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/static/css/main.css" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-spider me-2"></i>
+                {{ app_name }}
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/docs" target="_blank">
+                            <i class="fas fa-book me-1"></i>
+                            API Docs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/playground">
+                            <i class="fas fa-play me-1"></i>
+                            Playground
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="navbar-text">
+                            <i class="fas fa-circle text-success me-1"></i>
+                            <span id="connection-status">Connected</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <strong>{{ app_name }}</strong> v{{ app_version }}
+                    </p>
+                    <p class="text-muted small mb-0">
+                        Built with Crawl4AI and FastAPI
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <a href="https://github.com/unclecode/crawl4ai" target="_blank" class="text-decoration-none">
+                            <i class="fab fa-github me-1"></i>
+                            Crawl4AI on GitHub
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/static/js/websocket.js"></script>
+    <script src="/static/js/main.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <!-- WebSocket Connection Script -->
+    <script>
+        // Initialize WebSocket connection
+        document.addEventListener('DOMContentLoaded', function() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+            
+            window.wsManager = new WebSocketManager(wsUrl);
+            window.wsManager.connect();
+            
+            // Update connection status
+            window.wsManager.onStatusChange = function(connected) {
+                const statusElement = document.getElementById('connection-status');
+                const iconElement = statusElement.previousElementSibling;
+                
+                if (connected) {
+                    statusElement.textContent = 'Connected';
+                    iconElement.className = 'fas fa-circle text-success me-1';
+                } else {
+                    statusElement.textContent = 'Disconnected';
+                    iconElement.className = 'fas fa-circle text-danger me-1';
+                }
+            };
+        });
+    </script>
+</body>
+</html>

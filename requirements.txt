@@ -1,0 +1,46 @@
+# Core FastAPI dependencies
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+websockets>=12.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Template engine
+jinja2>=3.1.0
+
+# File handling
+aiofiles>=23.0.0
+python-multipart>=0.0.6
+
+# Configuration
+python-dotenv>=1.0.0
+
+# Crawl4AI integration - Core crawler
+crawl4ai>=0.6.0
+
+# Crawl4AI dependencies
+playwright>=1.49.0
+beautifulsoup4>=4.12.0
+lxml>=5.3.0
+aiosqlite>=0.20.0
+xxhash>=3.4.0
+rank-bm25>=0.2.0
+nltk>=3.9.1
+pillow>=10.4.0
+
+# HTTP client for testing
+httpx>=0.25.0
+
+# Rate limiting
+slowapi>=0.1.9
+
+# Logging and monitoring
+structlog>=23.0.0
+
+# Development dependencies
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+black>=23.0.0
+isort>=5.12.0
+flake8>=6.0.0

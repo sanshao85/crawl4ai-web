@@ -1,0 +1,249 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ app_name }} - Web to Markdown Converter{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Panel - Configuration -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cog me-2"></i>
+                    Crawler Configuration
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="crawl-form">
+                    <!-- URL Input -->
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Target Website URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-link"></i>
+                            </span>
+                            <input type="url" class="form-control" id="url" placeholder="Enter the URL to crawl" required>
+                        </div>
+                        <div class="form-text">Enter a valid HTTP or HTTPS URL</div>
+                    </div>
+
+                    <!-- Extraction Strategy -->
+                    <div class="mb-3">
+                        <label for="extraction-strategy" class="form-label">Extraction Strategy</label>
+                        <select class="form-select" id="extraction-strategy">
+                            <option value="default">Default - Standard extraction</option>
+                            <option value="llm">LLM - AI-powered extraction</option>
+                            <option value="css">CSS - Selector-based extraction</option>
+                            <option value="regex">Regex - Pattern-based extraction</option>
+                        </select>
+                    </div>
+
+                    <!-- Word Count Threshold -->
+                    <div class="mb-3">
+                        <label for="word-threshold" class="form-label">
+                            Word Count Threshold
+                            <span class="badge bg-secondary" id="word-threshold-value">200</span>
+                        </label>
+                        <input type="range" class="form-range" id="word-threshold" min="50" max="1000" value="200">
+                        <div class="form-text">Minimum words required for content blocks</div>
+                    </div>
+
+                    <!-- CSS Selector (conditional) -->
+                    <div class="mb-3" id="css-selector-group" style="display: none;">
+                        <label for="css-selector" class="form-label">CSS Selector</label>
+                        <input type="text" class="form-control" id="css-selector" placeholder="e.g., article, .content, main">
+                        <div class="form-text">Target specific elements with CSS selectors</div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="mb-3">
+                        <label class="form-label">Options</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="screenshot" value="">
+                            <label class="form-check-label" for="screenshot">
+                                Take Screenshot
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remove-overlays" value="" checked>
+                            <label class="form-check-label" for="remove-overlays">
+                                Remove Overlay Elements
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="exclude-external" value="" checked>
+                            <label class="form-check-label" for="exclude-external">
+                                Exclude External Links
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" id="start-crawl-btn">
+                            <i class="fas fa-play me-2"></i>
+                            Start Crawling
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="stop-crawl-btn" disabled>
+                            <i class="fas fa-stop me-2"></i>
+                            Stop Crawling
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Progress -->
+                <div class="mt-4" id="progress-section" style="display: none;">
+                    <h6>Crawling Progress</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" role="progressbar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted" id="progress-text">Initializing...</small>
+                        <small class="text-muted" id="progress-percentage">0%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel - Results -->
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Crawl Results
+                </h5>
+                <div class="btn-group" role="group" id="result-tabs">
+                    <input type="radio" class="btn-check" name="result-view" id="markdown-tab" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="markdown-tab">Markdown</label>
+
+                    <input type="radio" class="btn-check" name="result-view" id="html-tab" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="html-tab">HTML</label>
+
+                    <input type="radio" class="btn-check" name="result-view" id="json-tab" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="json-tab">JSON</label>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Welcome Message -->
+                <div id="welcome-message" class="text-center py-5">
+                    <i class="fas fa-spider fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Welcome to Crawl4AI Web Interface</h4>
+                    <p class="text-muted">Enter a URL and configure your crawling options to get started.</p>
+                    <div class="mt-4">
+                        <h6>How to use:</h6>
+                        <ol class="text-start text-muted">
+                            <li>Enter the URL you want to crawl</li>
+                            <li>Choose your extraction strategy</li>
+                            <li>Adjust the word count threshold</li>
+                            <li>Select additional options</li>
+                            <li>Click "Start Crawling"</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Results Content -->
+                <div id="results-content" style="display: none;">
+                    <!-- Markdown View -->
+                    <div id="markdown-content" class="result-view">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Markdown Content</h6>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('markdown-text')">
+                                <i class="fas fa-copy me-1"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <pre id="markdown-text" class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto;"></pre>
+                    </div>
+
+                    <!-- HTML View -->
+                    <div id="html-content" class="result-view" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Cleaned HTML</h6>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('html-text')">
+                                <i class="fas fa-copy me-1"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <pre id="html-text" class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto;"></pre>
+                    </div>
+
+                    <!-- JSON View -->
+                    <div id="json-content" class="result-view" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Structured Data</h6>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('json-text')">
+                                <i class="fas fa-copy me-1"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <pre id="json-text" class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto;"></pre>
+                    </div>
+
+                    <!-- Download Options -->
+                    <div class="mt-3">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-success" onclick="downloadResult('markdown')">
+                                <i class="fas fa-download me-1"></i>
+                                Download Markdown
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="downloadResult('html')">
+                                <i class="fas fa-download me-1"></i>
+                                Download HTML
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="downloadResult('json')">
+                                <i class="fas fa-download me-1"></i>
+                                Download JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error-message" class="alert alert-danger" style="display: none;">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Crawling Error
+                    </h6>
+                    <p id="error-text" class="mb-0"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Information Modal -->
+<div class="modal fade" id="taskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Task Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Task ID:</dt>
+                    <dd class="col-sm-8" id="modal-task-id">-</dd>
+                    
+                    <dt class="col-sm-4">Status:</dt>
+                    <dd class="col-sm-8" id="modal-status">-</dd>
+                    
+                    <dt class="col-sm-4">URL:</dt>
+                    <dd class="col-sm-8" id="modal-url">-</dd>
+                    
+                    <dt class="col-sm-4">Created:</dt>
+                    <dd class="col-sm-8" id="modal-created">-</dd>
+                    
+                    <dt class="col-sm-4">Duration:</dt>
+                    <dd class="col-sm-8" id="modal-duration">-</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/components.js"></script>
+{% endblock %}
